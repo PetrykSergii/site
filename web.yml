@@ -1,13 +1,25 @@
 ---
 - name: Configure WebServers
   hosts: Azure
-  become: True
+  become: true
   tasks:
     - name: Install Nginx
-      apt: name=nginx
+      apt:
+        name: nginx
+        update_cache: yes
+        state: latest
+
     - name: Copy config file Nginx
-      copy: src=/Jenkins/nginx.conf dest=/etc/nginx
+      copy:
+        src: "/Jenkins/{{ ansible_playbook_directory }}/nginx.conf"
+        dest: /etc/nginx/nginx.conf
+
     - name: Copy site index.html
-      copy: src=/Jenkins/index.html dest=/var/www/html
-    - name: restart Nginx
-      service: name=nginx state=restarted
+      copy:
+        src: "/Jenkins/{{ ansible_playbook_directory }}/index.html"
+        dest: /var/www/html/index.html
+
+    - name: Restart Nginx
+      service:
+        name: nginx
+        state: restarted
